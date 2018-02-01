@@ -40,9 +40,9 @@ export default class extends Component {
           color='black'
           onPress={() => this.props.navigation.navigate('Signup')}
         />
-        <ScrollView>
+        {/* <ScrollView>
           <Text>{JSON.stringify(this.state.response, null, 2)}</Text>
-        </ScrollView>
+        </ScrollView> */}
       </View>
     );
   }

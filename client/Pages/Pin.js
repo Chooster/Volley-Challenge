@@ -14,7 +14,7 @@ export default class extends Component {
         // Alert.alert('user', `${userId}`);
       }
       catch (err) {
-        Alert.alert('error', `${err}`);
+        Alert.alert('User Error', `${err}`);
       }
       let response = await fetch('https://bciiecup19.execute-api.us-east-1.amazonaws.com/testing/volley-linking-service', {
         method: 'POST',
@@ -29,12 +29,12 @@ export default class extends Component {
       });
       let responseJson = await response.json();
       this.setState({
+        response: responseJson,
         volleyId: responseJson.volleyId,
         pin: responseJson.pin,
         loading: false,
-        loaded: true
+        loaded: true,
       });
-      this.setState({ response: responseJson });
     }
     catch (error) {
       Alert.alert(
@@ -45,32 +45,31 @@ export default class extends Component {
   }
 
   fetchPair = async () => {
+    const { volleyId, pin } = this.state;
     try {
-      let paired = await fetch(`https://s3.amazonaws.com/volley-linking-api/${this.state.volleyId}`)
-      // Alert.alert('test', `${paired}`)
-      return paired
+      let response = await fetch(`https://s3.amazonaws.com/volley-linking-api/${volleyId}`);
+      let responseJson = await response.json();
+      this.setState({ paired: responseJson[pin] })
+      // Alert.alert('paired', `${this.state.paired}`)
     }
     catch (error) {
-      Alert.alert('error', `${error}`)
+      Alert.alert('Fetch Error', `${error}`)
     }
   }
 
-  pollVolley = () => {
+  poll = () => {
     setTimeout(() => {
-      let paired = this.fetchPair()
-      // paired = Object.entries(paired)[1]
-      this.setState({ paired })
+      this.fetchPair()
     }, 5000)
-    return this.state.paired
   }
 
   render() {
-    const { loading, loaded, response, volleyId, pin, paired } = this.state;
+    const { loading, loaded, response, pin, paired } = this.state;
     return (
       <View style={styles.container}>
-        <Text>{JSON.stringify(response, null, 2)}</Text>
-        <Text>{pin}</Text>
-        <Text>Paired: {JSON.stringify(this.pollVolley(), null, 2)}</Text>
+        {paired ? null : this.poll()}
+        <Text>Pin: {pin}</Text>
+        <Text>Paired: {paired.toString()}</Text>
         <Text>{loading ? 'Loading...' : 'Loaded'}</Text>
       </View>
     );
