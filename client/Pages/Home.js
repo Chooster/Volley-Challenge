@@ -22,19 +22,17 @@ export default class extends Component {
     const options = {
       permissions: ['public_profile', 'email'],
     }
-    const {type, token} = await Expo.Facebook.logInWithReadPermissionsAsync(APP_ID, options);
+    const {type, token, expires} = await Expo.Facebook.logInWithReadPermissionsAsync(APP_ID, options);
     if (type === 'success') {
       const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
       this.setState({ response });
-      const fbToken = response.url;
-      const fbExpiration = response.headers.map.expires.toString();
       const fbId = JSON.parse(response._bodyInit).id;
-      // Alert.alert('fbToken', `${typeof fbToken}`);
-      // Alert.alert('fbExpiration', `${typeof fbExpiration}`);
+      // Alert.alert('fbToken', `${typeof token}`);
+      // Alert.alert('fbExpiration', `${typeof expires}`);
       // Alert.alert('response', await response.json());
       await SecureStore.setItemAsync('fbId', fbId);
-      await SecureStore.setItemAsync('fbToken', fbToken);
-      await SecureStore.setItemAsync('fbExpiration', fbExpiration);
+      await SecureStore.setItemAsync('fbToken', token);
+      await SecureStore.setItemAsync('fbExpiration', expires.toString());
       this.props.navigation.navigate('Pin');
     }
   }
