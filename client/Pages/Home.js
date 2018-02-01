@@ -8,8 +8,8 @@ export default class extends Component {
 
   async componentDidMount() {
     try {
-      let userId = await SecureStore.getItemAsync('fbId');
-      if (userId) this.props.navigation.navigate('Pin');
+      let token = await SecureStore.getItemAsync('fbToken');
+      if (token) this.props.navigation.navigate('Pin');
     }
     catch (err) {
       console.log(err);
@@ -24,14 +24,16 @@ export default class extends Component {
     const {type, token} = await Expo.Facebook.logInWithReadPermissionsAsync(APP_ID, options);
     if (type === 'success') {
       const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
-      th+is.setState({ response })
-      // const fbToken = response.etag
-      const fbExpiration = response.expires
-      const fbId = JSON.parse(response._bodyInit).id
+      this.setState({ response });
+      const fbToken = response.url;
+      const fbExpiration = response.headers.map.expires.toString();
+      const fbId = JSON.parse(response._bodyInit).id;
+      // Alert.alert('fbToken', `${typeof fbToken}`);
+      // Alert.alert('fbExpiration', `${typeof fbExpiration}`);
       // Alert.alert('response', await response.json());
-      // this.props.navigation.navigate('Pin');
       await SecureStore.setItemAsync('fbId', fbId);
-      // Alert.alert('fbId', `${fbId}`)
+      await SecureStore.setItemAsync('fbToken', fbToken);
+      await SecureStore.setItemAsync('fbExpiration', fbExpiration);
       this.props.navigation.navigate('Pin');
     }
   }
@@ -50,9 +52,9 @@ export default class extends Component {
           color='black'
           onPress={() => this.props.navigation.navigate('Signup')}
         />
-        {/* <ScrollView>
+        <ScrollView>
           <Text>{JSON.stringify(this.state.response, null, 2)}</Text>
-        </ScrollView> */}
+        </ScrollView>
       </View>
     );
   }
