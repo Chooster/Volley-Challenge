@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Text, View, Button, Alert, ScrollView } from 'react-native';
+import { Text, View, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import { styles } from '../styles';
 import { SecureStore } from 'expo';
+import { Button } from 'react-native-elements';
 
 export default class extends Component {
   state = { response: '' }
@@ -41,20 +42,26 @@ export default class extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text>Login With</Text>
-        <Button
-          title='FACEBOOK'
-          color='black'
-          onPress={() => this.login()}
-        />
-        <Button
-          title='E-MAIL'
-          color='black'
-          onPress={() => this.props.navigation.navigate('Signup')}
-        />
-        <ScrollView>
+        <Text style={styles.titleText}>Login With</Text>
+        <View style={styles.buttonGroup}>
+          <Button
+            icon={{ name: 'person' }}
+            onPress={() => this.login()}
+            containerViewStyle={styles.buttonContainer}
+            buttonStyle={styles.button}
+            title={`Facebook`}
+          />
+          <Button
+            icon={{ name: 'mail' }}
+            onPress={() => this.props.navigation.navigate('Signup')}
+            containerViewStyle={styles.buttonContainer}
+            buttonStyle={styles.button}
+            title={'E-mail'}
+          />
+        </View>
+        {/* <ScrollView>
           <Text>{JSON.stringify(this.state.response, null, 2)}</Text>
-        </ScrollView>
+        </ScrollView> */}
       </View>
     );
   }

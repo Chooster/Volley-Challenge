@@ -1,17 +1,20 @@
 import React, { Component } from 'react';
-import { Button, Text, View, Alert } from 'react-native';
+import { Text, View, Alert } from 'react-native';
 import { styles } from '../styles';
 import { SecureStore } from 'expo';
+import { Button } from 'react-native-elements';
 
 export default class extends Component {
   state = { loading: true, loaded: false, volleyId: '', pin: '', response: '', paired: '' }
 
   async componentDidMount() {
     try {
-      let userId
+      let userId, userEmail
       try {
         userId = await SecureStore.getItemAsync('fbId');
-        // Alert.alert('user', `${userId}`);
+        userEmail = await SecureStore.getItemAsync('userEmail')
+        // Alert.alert('userId', `${userId}`);
+        // Alert.alert('userEmail', `${userEmail}`);
       }
       catch (err) {
         Alert.alert('User Error', `${err}`);
@@ -68,13 +71,19 @@ export default class extends Component {
     return (
       <View style={styles.container}>
         {paired ? null : this.poll()}
-        <Text>Pin: {pin}</Text>
-        <Text>Paired: {paired}</Text>
-        <Text>{loading ? 'Loading...' : 'Loaded'}</Text>
+        <Text style={styles.titleText}>{loading ? 'Loading...' : 'Loaded'}</Text>
+        <View style={styles.pinContainer}>
+          <Text>Pin: {pin}</Text>
+          <Text>Paired: {paired}</Text>
+        </View>
         <Button
           title='Change User'
-          onPress={() => this.props.navigation.navigate('Home')}
-          color='black'
+          icon={{ name: 'autorenew' }}
+          buttonStyle={styles.button}
+          onPress={async () => {
+            await SecureStore.deleteItemAsync('fbToken');
+            this.props.navigation.navigate('Home');
+          }}
         />
       </View>
     );
