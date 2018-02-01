@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, Alert } from 'react-native';
+import { Button, Text, View, Alert } from 'react-native';
 import { styles } from '../styles';
 import { SecureStore } from 'expo';
 
@@ -49,7 +49,7 @@ export default class extends Component {
     try {
       let response = await fetch(`https://s3.amazonaws.com/volley-linking-api/${volleyId}`);
       let responseJson = await response.json();
-      this.setState({ paired: responseJson[pin] })
+      this.setState({ paired: `${responseJson[pin]}` })
       // Alert.alert('paired', `${this.state.paired}`)
     }
     catch (error) {
@@ -69,8 +69,13 @@ export default class extends Component {
       <View style={styles.container}>
         {paired ? null : this.poll()}
         <Text>Pin: {pin}</Text>
-        <Text>Paired: {paired.toString()}</Text>
+        <Text>Paired: {paired}</Text>
         <Text>{loading ? 'Loading...' : 'Loaded'}</Text>
+        <Button
+          title='Change User'
+          onPress={() => this.props.navigation.navigate('Home')}
+          color='black'
+        />
       </View>
     );
   }

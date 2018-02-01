@@ -6,6 +6,16 @@ import { SecureStore } from 'expo';
 export default class extends Component {
   state = { response: '' }
 
+  async componentDidMount() {
+    try {
+      let userId = await SecureStore.getItemAsync('fbId');
+      if (userId) this.props.navigation.navigate('Pin');
+    }
+    catch (err) {
+      console.log(err);
+    }
+  }
+
   login = async () => {
     const APP_ID = '414644268964862';
     const options = {
@@ -14,7 +24,7 @@ export default class extends Component {
     const {type, token} = await Expo.Facebook.logInWithReadPermissionsAsync(APP_ID, options);
     if (type === 'success') {
       const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
-      this.setState({ response })
+      th+is.setState({ response })
       // const fbToken = response.etag
       const fbExpiration = response.expires
       const fbId = JSON.parse(response._bodyInit).id
