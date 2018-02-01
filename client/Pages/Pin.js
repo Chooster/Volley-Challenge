@@ -11,7 +11,7 @@ export default class extends Component {
       let userId
       try {
         userId = await SecureStore.getItemAsync('fbId');
-        Alert.alert('user', `${userId}`);
+        // Alert.alert('user', `${userId}`);
       }
       catch (err) {
         Alert.alert('error', `${err}`);
@@ -46,8 +46,8 @@ export default class extends Component {
 
   fetchPair = async () => {
     try {
-      let paired = await fetch('https://mywebsite.com/mydata.json')
-      Alert.alert('test', `${paired}`)
+      let paired = await fetch(`https://s3.amazonaws.com/volley-linking-api/${this.state.volleyId}`)
+      // Alert.alert('test', `${paired}`)
       return paired
     }
     catch (error) {
