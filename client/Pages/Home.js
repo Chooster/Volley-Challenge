@@ -43,7 +43,7 @@ export default class extends Component {
       const responseName = await response.json();
       // Alert.alert('fbToken', `${typeof token}`);
       const tokenDate = new Date().getTime();
-      await SecureStore.setItemAsync('fbTokenTime', tokenDate);
+      await SecureStore.setItemAsync('fbTokenTime', tokenDate.toString());
       // Alert.alert('response', `${JSON.stringify(tokenDate, null, 2)}`);
       // Alert.alert('fbExpiration', `${expires}`);
       // Alert.alert('date', `${JSON.stringify(new Date().getTime(), null, 2)}`);
