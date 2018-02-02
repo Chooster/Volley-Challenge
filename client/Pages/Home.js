@@ -9,11 +9,23 @@ export default class extends Component {
 
   async componentDidMount() {
     try {
+      let expiration = await SecureStore.getItemAsync('fbExpiration');
+      let tokenTime = await SecureStore.getItemAsync('fbTokenTime');
       let token = await SecureStore.getItemAsync('fbToken');
+      if (expiration && tokenTime && token) {
+        let currentTime = new Date().getTime;
+        if (tokenTime + (expiration / 1000) <= currentTime) {
+          await SecureStore.deleteItemAsync('fbToken');
+          await SecureStore.deleteItemAsync('fbTokenTime');
+          await SecureStore.deleteItemAsync('fbExpiration');
+          await SecureStore.deleteItemAsync('fbId');
+          expiration = tokenTime = token = currentTime = null;
+        }
+      }
       if (token) this.props.navigation.navigate('Pin');
     }
     catch (err) {
-      console.log(err);
+      console.error(err);
     }
   }
 
@@ -27,9 +39,14 @@ export default class extends Component {
       const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
       this.setState({ response });
       const fbId = JSON.parse(response._bodyInit).id;
+      const fbDate = response.headers.map.date[0];
+      const responseName = await response.json();
       // Alert.alert('fbToken', `${typeof token}`);
-      // Alert.alert('fbExpiration', `${typeof expires}`);
-      // Alert.alert('response', await response.json());
+      const tokenDate = new Date().getTime();
+      await SecureStore.setItemAsync('fbTokenTime', tokenDate);
+      // Alert.alert('response', `${JSON.stringify(tokenDate, null, 2)}`);
+      // Alert.alert('fbExpiration', `${expires}`);
+      // Alert.alert('date', `${JSON.stringify(new Date().getTime(), null, 2)}`);
       await SecureStore.setItemAsync('fbId', fbId);
       await SecureStore.setItemAsync('fbToken', token);
       await SecureStore.setItemAsync('fbExpiration', expires.toString());
